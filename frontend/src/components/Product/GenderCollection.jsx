@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import mensCollectionImage from "../../assets/mens-collection.svg";
 import womensCollectionImage from "../../assets/womens-collection.svg";
-import KidsCollectionImage from "../../assets/Kids.svg";
 
 const GenderCollectionSection = () => {
     return (
@@ -14,8 +13,8 @@ const GenderCollectionSection = () => {
                         <h2 className="mb-2 text-lg font-extrabold tracking-wider text-orange-600 uppercase md:mb-3 md:text-2xl lg:text-3xl">
                             Women's Collection
                         </h2>
-                        <Link 
-                            to="/collections/all?gender=Women" 
+                        <Link
+                            to="/collections/all?gender=Women"
                             className="text-base font-medium text-orange-600 underline transition duration-300 md:text-lg lg:text-xl hover:text-orange-500"
                         >
                             Shop Now →
@@ -30,8 +29,8 @@ const GenderCollectionSection = () => {
                         <h2 className="mb-2 text-lg font-extrabold tracking-wider text-orange-600 uppercase md:mb-3 md:text-2xl lg:text-3xl">
                             Men's Collection
                         </h2>
-                        <Link 
-                            to="/collections/all?gender=Men" 
+                        <Link
+                            to="/collections/all?gender=Men"
                             className="text-base font-medium text-orange-600 underline transition duration-300 md:text-lg lg:text-xl hover:text-orange-500"
                         >
                             Shop Now →
