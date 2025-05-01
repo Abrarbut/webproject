@@ -11,7 +11,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-}); 
+});
 
 // Set up multer for file uploads\
 
@@ -40,7 +40,7 @@ const streamUpload=(fileBuffer)=>{
 }
 const result=await streamUpload(req.file.buffer)
 
-res.json({imageUrl:result.secure_url})
+res.json({url: result.secure_url})
 
 
 
@@ -49,7 +49,7 @@ res.json({imageUrl:result.secure_url})
         console.error(error);
 
         res.status(500).json({message:"Server Error"})
-        
+
     }
 })
 

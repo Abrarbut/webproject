@@ -1,20 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoginImage from "../assets/login.webp"
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from './../redux/slices/authSlices';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { mergeCart } from './../redux/slices/cartSlices';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loginError, setLoginError] = useState("");
     const dispatch = useDispatch();
-    const navigate=useNavigate()
-    
+    const navigate = useNavigate()
+    const location = useLocation()
+    const { user, guestId, loading, error } = useSelector((state) => state.auth)
+    const { cart } = useSelector((state) => state.cart)
+
+    //Get Redirect parameter
+    const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+    const isCheckoutRedirect = redirect.includes("checkout");
+    useEffect(() => {
+        if (user) {
+            if (cart?.products.length > 0 && guestId) {
+                dispatch(mergeCart({ guestId, user })).then(() => {
+                    navigate(isCheckoutRedirect ? "/checkout" : "/")
+                })
+
+            }
+            else {
+                navigate(isCheckoutRedirect ? "/checkout" : "/")
+            }
+            //If no cart products then redirect to checkout page or home page.
+        }
+    }, [user, cart, guestId, navigate, isCheckoutRedirect, dispatch])
+
+    // Handle error from Redux state
+    useEffect(() => {
+        if (error) {
+            setLoginError(error.message || "Login failed. Please check your credentials.");
+        }
+    }, [error])
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(loginUser({ email, password }));
-        navigate("/")
+        setLoginError(""); // Clear any previous errors
+        dispatch(loginUser({ email, password }))
+            .unwrap()
+            .then(() => {
+                // Only navigate after successful login
+                console.log("Login successful");
+                // Navigation will be handled by the useEffect when user state updates
+            })
+            .catch((errorData) => {
+                console.error("Login failed:", errorData);
+                setLoginError(errorData.message || "Invalid credentials. Please try again.");
+            });
         console.log("Email:", email, "Password:", password);
     };
 
@@ -28,6 +67,11 @@ const Login = () => {
                     </div>
                     <h2 className="mb-6 text-2xl font-bold text-center">Hey there! 👋</h2>
                     <p className="mb-6 text-center">Enter your username and password</p>
+                    {loginError && (
+                        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                            {loginError}
+                        </div>
+                    )}
 
                     <div className="mb-4">
                         <label className="block text-sm font-medium">Email</label>
@@ -50,10 +94,10 @@ const Login = () => {
                         />
                     </div>
                     <button type="submit" className="w-full p-2 text-white transition bg-black rounded-md hover:bg-gray-900">
-                        Sign In
+                        {loading ? "Loading .." : "Sign In"}
                     </button>
                     <p className="mt-6 text-sm text-center">Don't have an Account?
-                        <Link to="/register" className="text-blue-500">
+                        <Link to={`/register?redirect=${encodeURIComponent(redirect)}`} className="text-blue-500">
                             Register
                         </Link>
                     </p>

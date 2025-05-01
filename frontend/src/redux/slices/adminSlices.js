@@ -36,8 +36,8 @@ export const updateUser = createAsyncThunk("admin/updateUser", async ({ id, name
                 headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` },
             }
         );
-        return response.data;
-    } catch (error) {
+        return response.data.user ;
+    } catch (error)   {
         return rejectWithValue(error.response.data);
     }
 });
@@ -64,7 +64,7 @@ export const deleteUser = createAsyncThunk("admin/deleteUser", async (id )  => {
 
 
 const adminSlice = createSlice({
-    name: "admin",
+    name: "admin", 
     initialState: {
         users: [],
         loading: false,
@@ -101,6 +101,8 @@ const adminSlice = createSlice({
          
             .addCase(updateUser.fulfilled, (state, action) => {
             const updatedUser = action.payload;
+            console.log(action.payload);
+            
             const userIndex = state.users.findIndex(
                 (user) => user._id === updatedUser._id
             );

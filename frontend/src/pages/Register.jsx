@@ -1,20 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoginImage from "../assets/register.webp"
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { registerUser } from "../redux/slices/authSlices";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { mergeCart } from "../redux/slices/cartSlices";
 
 const Register = () => {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [registerError, setRegisterError] = useState("");
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const location = useLocation()
+    const { user, guestId, loading, error } = useSelector((state) => state.auth)
+    const { cart } = useSelector((state) => state.cart)
+
+    //Get Redirect parameter
+    const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+    const isCheckoutRedirect = redirect.includes("checkout");
+    useEffect(() => {
+        if (user) {
+            if (cart?.products.length > 0 && guestId) {
+                dispatch(mergeCart({ guestId, user })).then(() => {
+                    navigate(isCheckoutRedirect ? "/checkout" : "/")
+                })
+
+            }
+            else {
+                navigate(isCheckoutRedirect ? "/checkout" : "/")
+            }
+            //If no cart products then redirect to checkout page or home page.
+        }
+    }, [user, cart, guestId, navigate, isCheckoutRedirect, dispatch])
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(registerUser({ name, email, password }));
-        navigate("/login")
+        setRegisterError(""); // Clear any previous errors
+        dispatch(registerUser({ name, email, password }))
+            .unwrap()
+            .then(() => {
+                // Only navigate after successful registration
+                console.log("Registration successful");
+                navigate("/login");
+            })
+            .catch((errorData) => {
+                console.error("Registration failed:", errorData);
+                setRegisterError(errorData.message || "Registration failed. Please try again.");
+            });
         console.log("Email:", email, "Name:", name, "Password:", password);
     };
 
@@ -28,6 +61,11 @@ const Register = () => {
                     </div>
                     <h2 className="mb-6 text-2xl font-bold text-center">Hey there! 👋</h2>
                     <p className="mb-6 text-center">Enter your username and password</p>
+                    {registerError && (
+                        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                            {registerError}
+                        </div>
+                    )}
 
                     <div className="mb-4">
                         <label className="block text-sm font-medium">Email</label>
@@ -60,10 +98,10 @@ const Register = () => {
                         />
                     </div>
                     <button type="submit" className="w-full p-2 text-white transition bg-black rounded-md hover:bg-gray-900">
-                        Register Now
+                        {loading ? "Loading .." : "Register Now"}
                     </button>
                     <p className="mt-6 text-sm text-center">Have an Account?
-                        <Link to="/login" className="text-blue-500">
+                        <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="text-blue-500">
                             Log In
                         </Link>
                     </p>

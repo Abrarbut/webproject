@@ -13,7 +13,7 @@ headers:{
 }
                 }
             );
-            return response.data; 
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
@@ -26,7 +26,7 @@ export const updateOrderStatus = createAsyncThunk(
     async ({ id, status }, { rejectWithValue }) => {
         try {
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}/delivery-status`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
                 { status },
                 {
                     headers: {

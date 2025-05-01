@@ -13,7 +13,7 @@ try {
 }
 
 // Generate or retrieve guest ID
-const initialGuestId = localStorage.getItem("guestID") || `guest_${new Date().getTime()}`;
+const initialGuestId = localStorage.getItem("guestId") || `guest_${new Date().getTime()}`;
 localStorage.setItem("guestID", initialGuestId);
 
 // Initial Redux state

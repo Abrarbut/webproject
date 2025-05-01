@@ -1,22 +1,36 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { fetchAllOrders, updateOrderStatus } from '../../redux/slices/adminOrderSlices';
+import { updateCartItemQuantity } from '../../redux/slices/cartSlices';
 
 const OrderManagement = () => {
-    const orders = [
-        {
-            _id: 12312321,
-            user: {
-                name: "John Doe",
-            },
-            totalPrice: 110,
-            status: "Processing",
-        },
-    ];
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const { user } = useSelector((state) => state.auth)
+    const { orders, loading, error } = useSelector((state) => state.adminOrders);
+
+    useEffect(() => {
+        if (user && user.role !== "admin") {
+            navigate("/")
+        }
+        else {
+            dispatch(fetchAllOrders())
+
+        }
+    }, [user, navigate, dispatch])
+
+
     const handleStatusChange = (orderId, status) => {
-        console.log({ id: orderId, status: status });
+        dispatch(updateOrderStatus({ id: orderId, status }))
 
     }
+    if (loading) return <p>Loading ...</p>;
+    if (error) return <p>Error: {error}</p>;
+
     return (
         <div className="p-6 mx-auto max-w-7xl">
+
             <h2 className="mb-6 text-2xl font-bold">Order Management</h2>
             <div className="overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="min-w-full text-left text-gray-500">
@@ -30,7 +44,7 @@ const OrderManagement = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.length > 0 ? (
+                        {orders?.length > 0 ? (
                             orders.map((order) => (
                                 <tr
                                     key={order._id}
@@ -39,8 +53,8 @@ const OrderManagement = () => {
                                     <td className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         #{order._id}
                                     </td>
-                                    <td className="p-4">{order.user.name}</td>
-                                    <td className="p-4">{order.totalPrice}</td>
+                                    <td className="p-4">{order.user?.name}</td>
+                                    <td className="p-4">{order.totalPrice.toFixed(2)}</td>
                                     <td className="p-4">
                                         <select
                                             value={order.status}

@@ -100,15 +100,11 @@ router.post("/login", async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Server error", error: error.message });
     }
-});  
+});
 
-// route to get /api/users/profile
-
-router.get("/profile",protect, async (req, res) => {
-res.json(req.user)
-})
-
-
-
+// Route: GET /profile
+router.get("/profile", protect, async (req, res) => {
+    res.json(req.user);
+});
 
 module.exports = router;

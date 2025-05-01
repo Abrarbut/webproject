@@ -53,7 +53,16 @@ router.put('/:id/pay', protect, async (req, res) => {
             checkout.isPaid = true;
             checkout.paymentStatus = paymentStatus;
             checkout.paidAt = Date.now();
+
+            // Store payment details - ensure property name matches the model
             checkout.paymentdetails = paymentDetails;
+
+            console.log("Updating checkout with payment details:", {
+                id: checkout._id,
+                isPaid: checkout.isPaid,
+                paymentStatus: checkout.paymentStatus,
+                hasPaymentDetails: !!paymentDetails
+            });
 
             await checkout.save();
             res.status(200).json(checkout);

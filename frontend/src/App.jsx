@@ -23,6 +23,7 @@ import store from './redux/store';
 
 
 import './App.css';
+import ProtectedRoutes from './components/Common/Protectedroutes';
 
 export default function App() {
   return (
@@ -42,7 +43,7 @@ export default function App() {
             <Route path='order/:id' element={<OrderDetailsPage />} />
             <Route path="/my-orders" element={<MyOrdersPage />} />
           </Route>
-          <Route path='/admin' element={<AdminLayout />}>
+          <Route path='/admin' element={<ProtectedRoutes role="admin"><AdminLayout /></ProtectedRoutes> }>
             <Route index element={<AdminhomePage />} />
             <Route path='users' element={<UserMangement />} />
             <Route path='products' element={<ProductManagement />} />

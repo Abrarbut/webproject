@@ -1,49 +1,28 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetchUserOrders } from './../redux/slices/OrderSlices';
 
 const MyOrdersPage = () => {
-    const [orders, setOrders] = useState([]);
     const navigate=useNavigate()
-
+    const dispatch = useDispatch();
+    const {orders,loading,error}=useSelector((state)=>state.order);
+     
     useEffect(() => {
-        // Simulate fetching orders
-        setTimeout(() => {
-            const mockOrders = [
-                {
-                    _id: "12345",
-                    createdAt: new Date(),
-                    shippingAddress: { city: "New York", country: "USA" },
-                    orderItems: [
-                        {
-                            name: "Product 1",
-                            image: "https://picsum.photos/500/500?random=1",
+        dispatch(fetchUserOrders());
+    },[dispatch])
 
-                        },
-                    ],
-                    totalPrice: 100,
-                    isPaid: true
-                },
-                {
-                    _id: "123456",
-                    createdAt: new Date(),
-                    shippingAddress: { city: "New York", country: "USA" },
-                    orderItems: [
-                        {
-                            name: "Product 2",
-                            image: "https://picsum.photos/500/500?random=2",
-
-                        },
-                    ],
-                    totalPrice: 500,
-                    isPaid: true
-                },
-            ];
-            setOrders(mockOrders);
-        }, 1000);
-    }, []);
+  
  const handlerowclick=(id) => {
     navigate(`/order/${id}`)
  }
+ if (loading) {
+    return <p>Loading...</p>
+}
+if (error) {
+    return <p>error:{error}</p>
+}
+ 
     return (
         <div className="p-4 mx-auto max-w-7xl sm:p-6">
             <h2 className="mb-6 text-xl font-bold sm:text-2xl">My Orders</h2>
@@ -53,11 +32,11 @@ const MyOrdersPage = () => {
                         <tr>
                             <th className="px-4 py-2 sm:py-3">Image</th>
                             <th className="px-4 py-2 sm:py-3">Order ID</th>
-                            <th className="px-4 py-2 sm:py-3">Date</th>
-                            <th className="px-4 py-2 sm:py-3">City</th>
-                            <th className="px-4 py-2 sm:py-3">Country</th>
+                            <th className="px-4 py-2 sm:py-3">Created</th>
+                            <th className="px-4 py-2 sm:py-3">Shipping Address</th>
+                            <th className="px-4 py-2 sm:py-3">Items</th>
+                            <th className="px-4 py-2 sm:py-3">Price</th>
                             <th className="px-4 py-2 sm:py-3">Status</th>
-                            <th className="px-4 py-2 sm:py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

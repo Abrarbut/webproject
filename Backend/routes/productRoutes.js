@@ -167,7 +167,7 @@ router.get("/", async (req, res) => {
     }
     
     if (size) {
-      query.material = { $in: material.split(",") };
+      query.sizes = req.query.size ? req.query.size.split(',') : [];
     }
     if (color) {
       query.colors = { $in: [color]};

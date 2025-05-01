@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 // Middleware to protect routes
-const protect = async (req, resizeBy, next) => {
+const protect = async (req, res, next) => {
     let token;
 
     if (
@@ -22,7 +22,7 @@ const protect = async (req, resizeBy, next) => {
             next();
         } catch (error) {
             console.error("JWT verification failed:", error.message);
-            resizeBy.status(401).json({ message: "Not authorized, token failed" });
+            res.status(401).json({ message: "Not authorized, token failed" });
         }
     } else {
         return res.status(401).json({ message: "Not authorized, no token" });
@@ -38,4 +38,4 @@ const admin=(req,res,next)=>{
 }
 
 
-module.exports = {protect,admin};  
+module.exports = {protect,admin};

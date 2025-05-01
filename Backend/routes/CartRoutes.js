@@ -56,7 +56,7 @@ router.post("/", async (req, res) => {
 
             // Update total price
             cart.totalPrice = cart.products.reduce(
-                (acc, item) => acc + item.price * item.quantity,
+                (acc, item) => acc + (Number(item.price) * item.quantity),
                 0
             );
 
@@ -90,9 +90,9 @@ router.post("/", async (req, res) => {
 });
 
 // @route   PUT /api/cart
-// @desc    Remove a product from the cart for a logged-in user
-// @access  Private
-router.put("/", protect, async (req, res) => {
+// @desc    Update cart item quantity for a guest or logged-in user
+// @access  Public
+router.put("/", async (req, res) => {
     const { userId, quantity, size, color, productId, guestId } = req.body;
 
     try {
@@ -114,12 +114,12 @@ router.put("/", protect, async (req, res) => {
                 cart.products[productIndex].quantity = quantity;
             }
             else {
-                 
+
                 cart.products.splice(productIndex, 1);
             }
 
             cart.totalPrice = cart.products.reduce(
-                (acc, item) => acc + item.price * item.quantity,
+                (acc, item) => acc + (Number(item.price) * item.quantity),
                 0
             );
 
@@ -130,10 +130,10 @@ router.put("/", protect, async (req, res) => {
         }
 
 
-    } 
-    
-    
-    
+    }
+
+
+
     catch (error) {
         console.log(error);
         res.status(500).json({ message: "An error occurred", error: error.message });
@@ -164,7 +164,7 @@ router.delete("/", async (req, res) => {
             cart.products.splice(productIndex, 1);
 
             cart.totalPrice = cart.products.reduce(
-                (acc, item) => acc + item.price * item.quantity,
+                (acc, item) => acc + (Number(item.price) * item.quantity),
                 0
             );
 

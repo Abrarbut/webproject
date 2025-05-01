@@ -1,13 +1,24 @@
 import React from "react";
 import { IoClose } from "react-icons/io5";
-import CardContents from "../Cart/CardContent";
+import CartContents from "../Cart/CardContent"; // Corrected import
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 const Cart = ({ draweropen, toggleCartDrawer }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { user, guestId } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
+  const userId = user ? user._id : null;
+
   const handleCheckOut = () => {
-    navigate("/checkout")
-    toggleCartDrawer()
-  }
+    toggleCartDrawer();
+    if (!user) {
+      navigate("/login?redirect=checkout");
+    } else {
+      navigate("/checkout");
+    }
+  };
+
   return (
     <>
       {/* Overlay for better UX */}
@@ -32,16 +43,30 @@ const Cart = ({ draweropen, toggleCartDrawer }) => {
 
         {/* Cart Items Section */}
         <div className="flex-grow p-4 overflow-y-auto">
-          <p className="text-gray-500">Your cart is empty.</p>
-          <CardContents />
+          <p className="text-gray-500">Your cart</p>
+
+          {cart && cart?.products?.length > 0 ? (
+            <CartContents cart={cart} userId={userId} guestId={guestId} />
+          ) : (
+            <p>Your cart is empty</p>
+          )}
         </div>
 
         {/* Checkout Button */}
         <div className="sticky bottom-0 p-4 border-t shadow-sm">
-          <button onClick={handleCheckOut} className="w-full py-2 text-white transition bg-blue-600 rounded-lg hover:bg-blue-700">
-            Proceed to Checkout
-          </button>
-          <div className="mt-2 text-sm tracking-tighter text-center text-gray-500"> !!Shipping,taxes,and discount calculated!!</div>
+          {cart && cart?.products?.length > 0 && (
+            <>
+              <button
+                onClick={handleCheckOut}
+                className="w-full py-2 text-white transition bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                Proceed to Checkout
+              </button>
+              <div className="mt-2 text-sm tracking-tighter text-center text-gray-500">
+                !! Shipping, taxes, and discount calculated !!
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
