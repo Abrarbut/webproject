@@ -30,6 +30,10 @@ router.post('/', protect, async (req, res) => {
 
         await newCheckout.save();
         console.log(`Checkout created for user: ${req.user._id}`);
+        
+        //  Send email notification to the user
+        
+
         res.status(201).json(newCheckout);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

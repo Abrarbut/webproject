@@ -175,15 +175,7 @@ const CheckOut = () => {
                             <button type='submit' className="w-full py-3 text-white bg-black rounded">Continue to Payment</button>
                         ) : (
                             <div>
-                                <h3 className='mb-4 text-lg'>Pay with PayPal</h3>
-                                <Paypal
-                                    amount={cart.totalPrice + (cart.shipping || 0)}
-                                    onSuccess={handlePaymentSuccess}
-                                    onError={(err) => {
-                                        console.error("PayPal payment error:", err);
-                                        alert("Payment failed. Please try again.");
-                                    }}
-                                />
+                               <p className='bg-green-500 py-2 px-4 text-white font-medium'>Payment Successful</p>
                             </div>
                         )}
                     </div>

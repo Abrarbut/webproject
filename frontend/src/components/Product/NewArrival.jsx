@@ -18,7 +18,10 @@ const NewArrival = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`
         );
-        setNewArrivals(response.data);
+        console.log("New arrivals response:", response.data);
+
+        // Make sure you're accessing the correct field
+        setNewArrivals(response.data.products || []);
       } catch (error) {
         console.error("Error fetching new arrivals:", error);
       }
@@ -102,7 +105,7 @@ const NewArrival = () => {
         onMouseUp={handleMouseUpOrLeave}
         onMouseLeave={handleMouseUpOrLeave}
       >
-        {newArrivals.map((product) => (
+        {Array.isArray(newArrivals) && newArrivals.map((product) => (
           <div
             key={product._id}
             className="min-w-[100%] sm:min-w-[50%] lg:min-w-[30%] relative"
